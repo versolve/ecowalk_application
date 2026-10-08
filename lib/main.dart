@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Sesuaikan path ini dengan letak file splash_screen.dart atau login_screen.dart Anda
 import 'screens/auth/splash_screen.dart'; 
+import 'screens/dev_menu_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white, // Latar belakang default putih
       ),
       // Halaman pertama yang dimuat saat aplikasi dibuka
-      home: const SplashScreen(), 
+      home: const SplashScreen(), //DevMenuScreen(), 
     );
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'register_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../profile/profile_screen.dart';
+import 'forgot_password_screen.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 75),
 
               // Header Logo & Judul
               const Text(
@@ -48,8 +52,8 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'ECOWA',
                     style: TextStyle(
                       fontSize: 32,
@@ -58,12 +62,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       letterSpacing: 1.2,
                     ),
                   ),
-                  Icon(
-                    Icons.directions_run_rounded,
-                    color: primaryGreen,
-                    size: 36,
+                  SvgPicture.asset(
+                    'lib/assets/icons/logo_lari.svg',
+                    height: 36,
+                    width: 36,
+                    colorFilter: const ColorFilter.mode(
+                      primaryGreen,
+                      BlendMode.srcIn,
+                    ),
                   ),
-                  Text(
+                  const Text(
                     'K',
                     style: TextStyle(
                       fontSize: 32,
@@ -162,7 +170,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Logic login
+                    // Ambil teks dari controller
+                    String username = _usernameController.text;
+                    String password = _passwordController.text;
+
+                    // Logika Hardcode: Cek apakah input sama dengan "admin" dan "admin123"
+                    if (username == 'admin' && password == 'admin123') {
+                      // Jika benar, navigasi ke ProfileScreen (menggantikan halaman saat ini)
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfileScreen(),
+                        ),
+                      );
+                    } else {
+                      // Jika salah, tampilkan pop-up pesan error (SnackBar)
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Login gagal! Gunakan username: admin dan password: admin123',
+                          ),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryGreen,
@@ -185,11 +217,18 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
 
               // Lupa Kata Sandi
+                           // Lupa Kata Sandi
               GestureDetector(
                 onTap: () {
-                  // Navigasi ke lupa kata sandi
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ForgotPasswordScreen(),
+                    ),
+                  );
                 },
                 child: const Text(
+
                   'Lupa Kata Sandi?',
                   style: TextStyle(
                     color: accentBlue,
@@ -238,12 +277,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Google Logo Placeholder (bisa ganti Image.asset jika ada)
-                      Image.network(
-                        'https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg',
+                      Image.asset(
+                        'lib/assets/icons/google.png',
                         height: 20,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.g_mobiledata, color: Colors.red, size: 28),
+                        width: 20,
                       ),
                       const SizedBox(width: 12),
                       const Text(
@@ -289,7 +326,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 20),
             ],
           ),

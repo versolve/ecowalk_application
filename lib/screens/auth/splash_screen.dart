@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -9,6 +10,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  static const Color primaryGreen = Color(0xFF1B5E4B);
+
   @override
   void initState() {
     super.initState();
@@ -34,8 +37,8 @@ class _SplashScreenState extends State<SplashScreen> {
             // Logo ECOWALK
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'ECOWA',
                   style: TextStyle(
                     fontSize: 36,
@@ -44,12 +47,16 @@ class _SplashScreenState extends State<SplashScreen> {
                     letterSpacing: 1.5,
                   ),
                 ),
-                Icon(
-                  Icons.directions_run_rounded,
-                  color: Colors.white,
-                  size: 40,
+                SvgPicture.asset(
+                  'lib/assets/icons/logo_lari.svg',
+                  height: 36,
+                  width: 36,
+                  colorFilter: const ColorFilter.mode(
+                    Color.fromARGB(255, 253, 255, 255),
+                    BlendMode.srcIn,
+                  ),
                 ),
-                Text(
+                const Text(
                   'K',
                   style: TextStyle(
                     fontSize: 36,

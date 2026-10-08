@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'login_screen.dart';
+import 'verification_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,7 +16,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _isObscurePassword = true;
   bool _isObscureConfirmPassword = true;
@@ -87,48 +91,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
 
               // Header Logo & Judul "BUAT AKUN ECOWALK"
-              const Text(
-                'BUAT AKUN',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: primaryGreen,
-                  letterSpacing: 1.0,
+              Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'BUAT AKUN',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: primaryGreen,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'ECOWA',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: primaryGreen,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          'lib/assets/icons/logo_lari.svg',
+                          height: 34,
+                          width: 34,
+                          colorFilter: const ColorFilter.mode(
+                            primaryGreen,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const Text(
+                          'K',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: primaryGreen,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    'ECOWA',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900,
-                      color: primaryGreen,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  Icon(
-                    Icons.directions_run_rounded,
-                    color: primaryGreen,
-                    size: 34,
-                  ),
-                  Text(
-                    'K',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900,
-                      color: primaryGreen,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ],
               ),
 
               const SizedBox(height: 36),
@@ -219,7 +235,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Text.rich(
                       TextSpan(
                         text: 'Saya telah membaca dan menyetujui ',
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                         children: [
                           TextSpan(
                             text: 'persyaratan dan privasi pengguna',
@@ -243,7 +262,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Logic pendaftaran
+                    if (!_isAgreed) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Setujui persyaratan dan privasi pengguna terlebih dahulu.',
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    final email = _emailController.text.trim();
+                    final phone = _phoneController.text.trim();
+                    if (email.isEmpty && phone.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Masukkan email atau nomor HP.'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VerificationScreen(
+                          contact: email.isNotEmpty ? email : phone,
+                          isUsingEmail: email.isNotEmpty,
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryGreen,

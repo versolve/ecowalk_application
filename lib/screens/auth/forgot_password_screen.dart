@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../widgets/custom_clipper.dart';
+import 'reset_password_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -34,19 +37,50 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text('ECOWA', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: primaryGreen, letterSpacing: 1.2)),
-                        Icon(Icons.directions_run_rounded, color: primaryGreen, size: 36),
-                        Text('K', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: primaryGreen, letterSpacing: 1.2)),
+                      children: [
+                        const Text(
+                          'ECOWA',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: primaryGreen,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          'lib/assets/icons/logo_lari.svg',
+                          height: 36,
+                          width: 36,
+                          colorFilter: const ColorFilter.mode(
+                            primaryGreen,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const Text(
+                          'K',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: primaryGreen,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text('LUPA KATA SANDI', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primaryGreen)),
+                    const Text(
+                      'LUPA KATA SANDI',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: primaryGreen,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28.0),
               child: Column(
@@ -56,30 +90,45 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.notifications_none, size: 28, color: Colors.black87),
+                      const Icon(
+                        Icons.notifications_none,
+                        size: 28,
+                        color: Colors.black87,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           'Periksa dan masukan ${_isUsingEmail ? 'alamat Email' : 'Nomor Hp'} untuk mendapatkan kode verifikasi',
-                          style: const TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.black87,
+                            height: 1.4,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   TextField(
                     decoration: InputDecoration(
                       hintText: _isUsingEmail ? 'Alamat Email' : 'Nomor Hp',
-                      hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
-                      border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: primaryGreen, width: 2)),
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 13,
+                      ),
+                      border: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: primaryGreen, width: 2),
+                      ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -88,22 +137,42 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     },
                     child: Text(
                       _isUsingEmail ? 'Gunakan Nomor Hp' : 'Gunakan Email',
-                      style: const TextStyle(color: accentBlue, fontSize: 13, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: accentBlue,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   SizedBox(
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ResetPasswordScreen(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryGreen,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      child: const Text('KIRIM', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                      child: const Text(
+                        'KIRIM',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ],
