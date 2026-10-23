@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -41,11 +43,13 @@ class ProfileAvatar extends StatelessWidget {
     this.radius = 50,
     this.showEditBadge = false,
     this.onTapBadge,
+    this.imageFile,
   });
 
   final double radius;
   final bool showEditBadge;
   final VoidCallback? onTapBadge;
+  final File? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +64,7 @@ class ProfileAvatar extends StatelessWidget {
           child: CircleAvatar(
             radius: radius,
             backgroundColor: const Color(0xFFE2E8F0),
+            foregroundImage: imageFile == null ? null : FileImage(imageFile!),
             child: Icon(Icons.person, size: radius * 1.1, color: Colors.grey),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../auth/login_screen.dart';
+import '../home/home_screen.dart';
 import 'edit_profile_screen.dart';
 import 'settings_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -192,7 +193,7 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildCustomBottomNavBar(),
+      bottomNavigationBar: _buildCustomBottomNavBar(context),
     );
   }
 
@@ -234,7 +235,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCustomBottomNavBar() {
+  Widget _buildCustomBottomNavBar(BuildContext context) {
     return SizedBox(
       height: 76,
       child: Stack(
@@ -253,7 +254,12 @@ class ProfileScreen extends StatelessWidget {
                       color: Colors.white,
                       size: 28,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      );
+                    },
                   ),
                 ),
               ),

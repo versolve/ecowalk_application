@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../profile/profile_screen.dart';
-import 'forgot_password_screen.dart';
 
+import 'register_screen.dart';
+
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../home/home_screen.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -101,7 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.person, color: Colors.grey, size: 20),
+                  prefixIcon: const Icon(
+                    Icons.person,
+                    color: Colors.grey,
+                    size: 20,
+                  ),
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   fillColor: const Color(0xFFF7F8F9),
                   filled: true,
@@ -111,7 +117,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: primaryGreen, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: primaryGreen,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
@@ -135,7 +144,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 obscureText: _isObscure,
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock, color: Colors.grey, size: 20),
+                  prefixIcon: const Icon(
+                    Icons.lock,
+                    color: Colors.grey,
+                    size: 20,
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isObscure ? Icons.visibility_off : Icons.visibility,
@@ -157,7 +170,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: primaryGreen, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: primaryGreen,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
@@ -180,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
+                          builder: (context) => const HomeScreen(),
                         ),
                       );
                     } else {
@@ -217,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
 
               // Lupa Kata Sandi
-                           // Lupa Kata Sandi
+              // Lupa Kata Sandi
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -228,7 +244,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 },
                 child: const Text(
-
                   'Lupa Kata Sandi?',
                   style: TextStyle(
                     color: accentBlue,
@@ -243,7 +258,9 @@ class _LoginScreenState extends State<LoginScreen> {
               // Divider "Atau"
               Row(
                 children: const [
-                  Expanded(child: Divider(color: Color(0xFFE2E8F0), thickness: 1)),
+                  Expanded(
+                    child: Divider(color: Color(0xFFE2E8F0), thickness: 1),
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
@@ -251,7 +268,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ),
-                  Expanded(child: Divider(color: Color(0xFFE2E8F0), thickness: 1)),
+                  Expanded(
+                    child: Divider(color: Color(0xFFE2E8F0), thickness: 1),
+                  ),
                 ],
               ),
 

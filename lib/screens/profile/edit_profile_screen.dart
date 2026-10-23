@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'profile_widgets.dart';
 
@@ -12,11 +16,36 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   static const Color primaryGreen = Color(0xFF1B5E4B);
   final _nameController = TextEditingController();
+  final _imagePicker = ImagePicker();
+  File? _profileImage;
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final pickedImage = await _imagePicker.pickImage(
+        source: source,
+        imageQuality: 85,
+      );
+
+      if (!mounted || pickedImage == null) return;
+
+      setState(() {
+        _profileImage = File(pickedImage.path);
+      });
+    } on PlatformException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Kamera atau galeri tidak dapat dibuka.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _showImageSourceSheet() {
@@ -64,8 +93,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       borderRadius: BorderRadius.circular(18),
       onTap: () {
         Navigator.pop(sheetContext);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('$label belum tersedia.')));
+        _pickImage(
+          label == 'Kamera' ? ImageSource.camera : ImageSource.gallery,
+        );
       },
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -103,6 +133,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               radius: 58,
               showEditBadge: true,
               onTapBadge: _showImageSourceSheet,
+              imageFile: _profileImage,
             ),
             const SizedBox(height: 44),
             TextField(

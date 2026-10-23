@@ -20,6 +20,18 @@ void main() {
     await tester.tap(find.text('Hapus Akun'));
     await tester.pumpAndSettle();
     expect(find.text('HAPUS AKUN'), findsOneWidget);
+    final alertDialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+    expect(alertDialog.backgroundColor, Colors.white);
+    expect(find.text('Kata Sandi'), findsOneWidget);
+    expect(find.text('Masukan Kata Sandi'), findsOneWidget);
+    expect(
+      find.text(
+        'Anda akan menghapus akun anda. Tindakan ini tidak dapat dibatalkan. Semua data akan hilang.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
+    expect(find.widgetWithText(TextButton, 'Batal'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Hapus'));
     await tester.pump();

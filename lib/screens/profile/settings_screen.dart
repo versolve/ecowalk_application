@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'change_phone_screen.dart';
+import '../auth/login_screen.dart';
 import 'change_email_screen.dart';
 import 'change_password_screen.dart';
-import '../auth/login_screen.dart';
+import 'change_phone_screen.dart';
 import 'profile_widgets.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -14,8 +14,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  static const Color primaryGreen = Color(0xFF1B5E4B);
   final _passwordController = TextEditingController();
+  bool _obscureDeletePassword = true;
 
   @override
   void dispose() {
@@ -26,85 +26,120 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showDeleteAccountDialog() {
     showDialog<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'HAPUS AKUN',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'PERHATIAN! Tindakan ini akan menghapus seluruh data akun Anda secara permanen dan tidak dapat dikembalikan.',
-              style: TextStyle(fontSize: 12),
-              textAlign: TextAlign.center,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogStateContext, setDialogState) => AlertDialog(
+          backgroundColor: Colors.white,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          titlePadding: const EdgeInsets.fromLTRB(20, 24, 20, 14),
+          title: const Text(
+            'HAPUS AKUN',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFF2B2B2B),
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
             ),
-            const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFDECEA),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                'PERINGATAN: Aksi ini berbahaya dan dapat menghapus seluruh data akun Anda secara permanen. Lanjutkan dengan hati-hati.',
-                style: TextStyle(color: Colors.red, fontSize: 11),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Masukkan kata sandi Anda',
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
-            const SizedBox(height: 6),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'Kata Sandi',
-                hintStyle: TextStyle(fontSize: 12),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actionsPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-        actions: [
-          Row(
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    _passwordController.clear();
-                    Navigator.pop(dialogContext);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: primaryGreen),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscureDeletePassword,
+                decoration: InputDecoration(
+                  labelText: 'Kata Sandi',
+                  hintText: 'Masukan Kata Sandi',
+                  hintStyle: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 10,
+                    fontStyle: FontStyle.italic,
                   ),
-                  child: const Text(
-                    'Batal',
-                    style: TextStyle(color: primaryGreen),
+                  labelStyle: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 11,
+                  ),
+                  floatingLabelStyle: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 10,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureDeletePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: const Color(0xFF374151),
+                    ),
+                    onPressed: () {
+                      setDialogState(() {
+                        _obscureDeletePassword = !_obscureDeletePassword;
+                      });
+                    },
+                  ),
+                  contentPadding: const EdgeInsets.fromLTRB(14, 12, 8, 8),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: const BorderSide(color: Colors.red, width: 1.5),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
+              const SizedBox(height: 14),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                color: const Color(0xFFFFE3E3),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 1),
+                      child: Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 17,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Anda akan menghapus akun anda. Tindakan ini tidak dapat dibatalkan. Semua data akan hilang.',
+                        style: TextStyle(
+                          color: Color(0xFF4B5563),
+                          fontSize: 9,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: () {},
+                      child: const Icon(
+                        Icons.close,
+                        color: Color(0xFF4B5563),
+                        size: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
                   onPressed: () {
                     final password = _passwordController.text.trim();
                     if (password.isEmpty) {
@@ -125,20 +160,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: const Color(0xFFE5252A),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(88, 38),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                     ),
+                    elevation: 0,
                   ),
                   child: const Text(
                     'Hapus',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 32),
+                TextButton(
+                  onPressed: () {
+                    _passwordController.clear();
+                    Navigator.pop(dialogContext);
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF2B2B2B),
+                    minimumSize: const Size(40, 38),
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: const Text(
+                    'Batal',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
