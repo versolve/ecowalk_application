@@ -64,7 +64,7 @@ void main() {
   testWidgets('HomeScreen membuka ProfileScreen dari tab akun', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
 
-    await tester.tap(find.byIcon(Icons.person_outline));
+    await tester.tap(find.byKey(const Key('home-nav-akun')));
     await tester.pumpAndSettle();
 
     expect(find.byType(ProfileScreen), findsOneWidget);

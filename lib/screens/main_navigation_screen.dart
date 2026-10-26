@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'home/home_screen.dart';
 import 'profile/profile_screen.dart';
@@ -21,8 +22,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         index: _selectedIndex,
         children: const [
           HomeScreen(showBottomNavigation: false),
-          _PlaceholderScreen(title: 'Explore'),
-          _PlaceholderScreen(title: 'Chat'),
+          _PlaceholderScreen(title: 'Rekomendasi'),
+          _PlaceholderScreen(title: 'Favorit'),
           ProfileScreen(showBottomNavigation: false),
         ],
       ),
@@ -32,10 +33,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   Widget _buildBottomNavigationBar() {
     const items = [
-      (Icons.home_outlined, 'BERANDA'),
-      (Icons.shield_outlined, 'EXPLORE'),
-      (Icons.chat_bubble_outline, 'CHAT'),
-      (Icons.person_outline, 'AKUN'),
+      ('beranda.icon.svg', 'BERANDA'),
+      ('rekomendasi_icon.svg', 'REKOMENDASI'),
+      ('favorit_icon.svg', 'FAVORIT'),
+      ('akun_icon.svg', 'AKUN'),
     ];
 
     return SizedBox(
@@ -50,28 +51,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               for (var index = 0; index < items.length; index++)
                 Expanded(
                   child: GestureDetector(
+                    key: Key('bottom-nav-${items[index].$2.toLowerCase()}'),
                     onTap: () => setState(() => _selectedIndex = index),
                     child: index == _selectedIndex
-                        ? _buildActiveItem(items[index].$1, items[index].$2)
+                        ? _buildActiveItem(items[index].$2, items[index].$1)
                         : SizedBox(
                             height: 56,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  items[index].$1,
-                                  color: Colors.white,
-                                  size: 26,
+                            child: Center(
+                              child: SvgPicture.asset(
+                                'lib/assets/icons/${items[index].$1}',
+                                width: 24,
+                                height: 24,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.white70,
+                                  BlendMode.srcIn,
                                 ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  items[index].$2,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 9,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                   ),
@@ -83,7 +78,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     );
   }
 
-  Widget _buildActiveItem(IconData icon, String label) {
+  Widget _buildActiveItem(String label, String svgName) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -102,7 +97,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: Colors.black87, size: 22),
+              child: Center(
+                child: SvgPicture.asset(
+                  'lib/assets/icons/$svgName',
+                  width: 22,
+                  height: 22,
+                  colorFilter: const ColorFilter.mode(
+                    primaryGreen,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
             ),
           ),
         ),

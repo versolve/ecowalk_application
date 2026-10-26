@@ -543,10 +543,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBottomNavigationBar() {
     const items = [
-      (Icons.home_outlined, 'BERANDA'),
-      (Icons.shield_outlined, 'EXPLORE'),
-      (Icons.chat_bubble_outline, 'CHAT'),
-      (Icons.person_outline, 'AKUN'),
+      ('beranda.icon.svg', 'BERANDA'),
+      ('rekomendasi_icon.svg', 'REKOMENDASI'),
+      ('favorit_icon.svg', 'FAVORIT'),
+      ('akun_icon.svg', 'AKUN'),
     ];
 
     return SizedBox(
@@ -561,6 +561,7 @@ class _HomeScreenState extends State<HomeScreen> {
               for (var index = 0; index < items.length; index++)
                 Expanded(
                   child: GestureDetector(
+                    key: Key('home-nav-${items[index].$2.toLowerCase()}'),
                     onTap: () {
                       if (index == 3) {
                         Navigator.push(
@@ -577,23 +578,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? _buildActiveNavItem(items[index].$1, items[index].$2)
                         : SizedBox(
                             height: 56,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  items[index].$1,
-                                  color: Colors.white,
-                                  size: 26,
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  items[index].$2,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 9,
+                            child: SizedBox(
+                              height: 56,
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'lib/assets/icons/${items[index].$1}',
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.white70,
+                                    BlendMode.srcIn,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                   ),
@@ -605,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildActiveNavItem(IconData icon, String label) {
+  Widget _buildActiveNavItem(String svgName, String label) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -624,7 +621,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: Colors.black87, size: 22),
+              child: Center(
+                child: SvgPicture.asset(
+                  'lib/assets/icons/$svgName',
+                  width: 22,
+                  height: 22,
+                  colorFilter: const ColorFilter.mode(
+                    primaryGreen,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
