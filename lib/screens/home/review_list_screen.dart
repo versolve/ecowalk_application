@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ReviewListScreen extends StatefulWidget {
   const ReviewListScreen({super.key});
@@ -39,13 +40,35 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                 (_) => const Icon(Icons.star, color: Colors.amber, size: 20),
               ),
               const Spacer(),
-              const Text(
-                'ECOWALK',
-                style: TextStyle(
-                  color: primaryGreen,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'ECOWA',
+                    style: TextStyle(
+                      color: primaryGreen,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SvgPicture.asset(
+                    'lib/assets/icons/logo_lari.svg',
+                    height: 14,
+                    width: 14,
+                    colorFilter: const ColorFilter.mode(
+                      primaryGreen,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  const Text(
+                    'K',
+                    style: TextStyle(
+                      color: primaryGreen,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../profile/profile_screen.dart';
 import 'category_screen.dart';
 import 'detail_wisata_screen.dart';
+import 'notification_screen.dart';
+import 'recently_viewed_screen.dart';
+import 'weather_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.showBottomNavigation = true});
+
+  final bool showBottomNavigation;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -102,6 +108,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildSectionTitle(
                           'Terakhir Dilihat',
                           trailing: 'Selengkapnya',
+                          trailingKey: const Key('recently-viewed-more'),
+                          onTrailingTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const RecentlyViewedScreen(),
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 12),
                         SizedBox(
@@ -115,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            _buildBottomNavigationBar(),
+            if (widget.showBottomNavigation) _buildBottomNavigationBar(),
           ],
         ),
       ),
@@ -134,7 +149,12 @@ class _HomeScreenState extends State<HomeScreen> {
             letterSpacing: -0.7,
           ),
         ),
-        const Icon(Icons.directions_run, color: primaryGreen, size: 22),
+        SvgPicture.asset(
+          'lib/assets/icons/logo_lari.svg',
+          height: 26,
+          width: 26,
+          colorFilter: const ColorFilter.mode(primaryGreen, BlendMode.srcIn),
+        ),
         const Text(
           'K',
           style: TextStyle(
@@ -151,17 +171,25 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Icon(Icons.person, color: primaryGreen, size: 23),
         ),
         const SizedBox(width: 10),
-        Container(
-          width: 38,
-          height: 38,
-          decoration: const BoxDecoration(
-            color: primaryGreen,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.notifications_none,
-            color: Colors.white,
-            size: 23,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotificationScreen()),
+            );
+          },
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: const BoxDecoration(
+              color: primaryGreen,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.notifications_none,
+              color: Colors.white,
+              size: 23,
+            ),
           ),
         ),
       ],
@@ -169,64 +197,81 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildWeatherCard() {
-    return Container(
-      height: 210,
-      padding: const EdgeInsets.fromLTRB(22, 36, 18, 18),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(9),
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [primaryGreen, Color(0xFFD5DCD9)],
-        ),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 3)),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Minggu, 16 Febuari 2025',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'Klapanunggal, Bogor',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  '30°C',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 42,
-                    height: 1,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                SizedBox(height: 15),
-                Text(
-                  'Cerah Berawan',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const WeatherScreen()),
+        );
+      },
+      child: Container(
+        height: 210,
+        padding: const EdgeInsets.fromLTRB(22, 36, 18, 18),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(9),
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [primaryGreen, Color(0xFFD5DCD9)],
           ),
-          SizedBox(width: 145, child: _WeatherIllustration()),
-        ],
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Minggu, 16 Febuari 2025',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  const Text(
+                    'Klapanunggal, Bogor',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                  SizedBox(height: 10),
+                  const Text(
+                    '30°C',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 42,
+                      height: 1,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  const Text(
+                    'Cerah Berawan',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 145, child: _WeatherIllustration()),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title, {String? trailing}) {
+  Widget _buildSectionTitle(
+    String title, {
+    String? trailing,
+    VoidCallback? onTrailingTap,
+    Key? trailingKey,
+  }) {
     return Row(
       children: [
         Text(
@@ -235,9 +280,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         if (trailing != null) ...[
           const Spacer(),
-          Text(trailing, style: const TextStyle(fontSize: 13)),
-          const SizedBox(width: 8),
-          const Icon(Icons.chevron_right, size: 18),
+          GestureDetector(
+            key: trailingKey,
+            onTap: onTrailingTap,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(trailing, style: const TextStyle(fontSize: 13)),
+                const SizedBox(width: 8),
+                const Icon(Icons.chevron_right, size: 18),
+              ],
+            ),
+          ),
         ],
       ],
     );

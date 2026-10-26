@@ -10,9 +10,11 @@ import 'terms_of_service_screen.dart';
 import 'profile_widgets.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, this.showBottomNavigation = true});
 
-  static const Color primaryGreen = Color(0xFF1B5E4B);
+  static const primaryGreen = Color(0xFF176B5B);
+
+  final bool showBottomNavigation;
 
   void _showLogoutDialog(BuildContext context) {
     showDialog<void>(
@@ -193,7 +195,9 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildCustomBottomNavBar(context),
+      bottomNavigationBar: showBottomNavigation
+          ? _buildCustomBottomNavBar(context)
+          : null,
     );
   }
 

@@ -22,15 +22,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
     'Seni',
   ];
   late String _category;
-  String _sort = 'Rekomendasi';
-  bool _hasFilter = false;
+  String _sort = 'Direkomendasikan';
 
   final _destinations = const [
     _CategoryDestination(
       name: 'Dunia Fantasi (DUFAN)',
       category: 'Seni',
       location: 'Ancol, Jakarta Utara',
-      price: 'Rp. 190.000 - Rp. 400.000',
+      price: 'Mulai dari Rp. 200.000',
       imagePath: 'lib/assets/images/dufan.jpg',
       rating: 4.75,
     ),
@@ -62,16 +61,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
     final result = _category == 'Semua'
         ? [..._destinations]
         : _destinations.where((item) => item.category == _category).toList();
-    if (_sort == 'Rating Tertinggi') {
+    if (_sort == 'Ulasan Terbaik') {
       result.sort((a, b) => b.rating.compareTo(a.rating));
     } else if (_sort == 'Harga Terendah') {
       result.sort((a, b) => _price(a).compareTo(_price(b)));
+    } else if (_sort == 'Harga Tertinggi') {
+      result.sort((a, b) => _price(b).compareTo(_price(a)));
     }
     return result;
   }
 
   int _price(_CategoryDestination destination) {
-    return destination.name == 'Dunia Fantasi (DUFAN)' ? 190000 : 35000;
+    if (destination.name.startsWith('Taman Mini')) return 35000;
+    if (destination.name.startsWith('Taman Safari')) return 170000;
+    return 200000;
   }
 
   @override
@@ -82,42 +85,63 @@ class _CategoryScreenState extends State<CategoryScreen> {
         backgroundColor: primaryGreen,
         foregroundColor: Colors.white,
         title: const Text(
-          'Kategori Wisata',
+          'Kategori',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
         children: [
-          _buildCategoryTabs(),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
             child: Row(
               children: [
                 Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _showFilterSheet,
-                    icon: const Icon(Icons.tune, size: 16),
-                    label: const Text('Filter'),
+                  child: SizedBox(
+                    height: 36,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Cari destinasi wisata',
+                        hintStyle: const TextStyle(
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          size: 18,
+                          color: primaryGreen,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(22),
+                          borderSide: const BorderSide(color: Colors.black26),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _showSortSheet,
-                    icon: const Icon(Icons.swap_vert, size: 18),
-                    label: const Text('Urutkan'),
-                  ),
+                const SizedBox(width: 18),
+                _headerAction(
+                  key: const Key('category-filter-button'),
+                  icon: Icons.tune,
+                  label: 'Filter',
+                  onTap: _showFilterSheet,
+                ),
+                const SizedBox(width: 16),
+                _headerAction(
+                  key: const Key('category-sort-button'),
+                  icon: Icons.swap_vert,
+                  label: 'Urutkan',
+                  onTap: _showSortSheet,
                 ),
               ],
             ),
           ),
+          _buildCategoryTabs(),
           Expanded(
             child: _visibleDestinations.isEmpty
                 ? const Center(child: Text('Wisata tidak ditemukan.'))
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                : ListView.builder(
                     itemCount: _visibleDestinations.length,
-                    separatorBuilder: (_, index) => const SizedBox(height: 14),
                     itemBuilder: (_, index) =>
                         _buildDestinationCard(_visibleDestinations[index]),
                   ),
@@ -127,28 +151,53 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
+  Widget _headerAction({
+    Key? key,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      key: key,
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: primaryGreen, size: 23),
+          Text(label, style: const TextStyle(fontSize: 7)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCategoryTabs() {
     return SizedBox(
-      height: 52,
+      height: 48,
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
-        separatorBuilder: (_, index) => const SizedBox(width: 18),
+        separatorBuilder: (_, index) => const SizedBox(width: 28),
         itemBuilder: (_, index) {
           final category = categories[index];
           final selected = category == _category;
           return GestureDetector(
             onTap: () => setState(() => _category = category),
-            child: Text(
-              category,
-              style: TextStyle(
-                color: selected ? primaryGreen : Colors.black87,
-                fontSize: 12,
-                fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-                decoration: selected ? TextDecoration.underline : null,
-                decorationColor: primaryGreen,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  category,
+                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                ),
+                if (selected)
+                  Container(
+                    margin: const EdgeInsets.only(top: 6),
+                    width: 44,
+                    height: 1.5,
+                    color: primaryGreen,
+                  ),
+              ],
             ),
           );
         },
@@ -158,7 +207,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Widget _buildDestinationCard(_CategoryDestination destination) {
     return InkWell(
-      borderRadius: BorderRadius.circular(10),
       onTap: () {
         Navigator.push(
           context,
@@ -173,149 +221,348 @@ class _CategoryScreenState extends State<CategoryScreen> {
         );
       },
       child: Container(
-        height: 140,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
+        height: 86,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: Color(0xFFE2E2E2))),
         ),
-        clipBehavior: Clip.antiAlias,
         child: Row(
           children: [
-            SizedBox(
-              width: 145,
-              height: double.infinity,
-              child: Image.asset(destination.imagePath, fit: BoxFit.cover),
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: const Color(0xFFD9D9D9),
+              backgroundImage: AssetImage(destination.imagePath),
             ),
+            const SizedBox(width: 10),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    destination.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 12),
+                      const SizedBox(width: 2),
+                      Text(
+                        destination.rating.toString(),
+                        style: const TextStyle(fontSize: 9),
+                      ),
+                      const Text(
+                        ' | Open 10:00 - 22:00',
+                        style: TextStyle(fontSize: 8),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    destination.location,
+                    style: const TextStyle(fontSize: 8),
+                  ),
+                  Text(destination.price, style: const TextStyle(fontSize: 8)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 21),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showSortSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 18),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 98,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
                   children: [
-                    Text(
-                      destination.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      destination.location,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 15),
-                        const SizedBox(width: 4),
-                        Text(
-                          destination.rating.toString(),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    const Expanded(
+                      child: Text(
+                        'Urutkan',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const Spacer(),
-                        const Icon(Icons.chevron_right, size: 18),
-                      ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(sheetContext),
                     ),
                   ],
                 ),
-              ),
+                const Divider(height: 1),
+                for (final option in [
+                  'Direkomendasikan',
+                  'Harga Tertinggi',
+                  'Harga Terendah',
+                  'Ulasan Terbaik',
+                  'Jarak Terdekat',
+                ])
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(option, style: const TextStyle(fontSize: 14)),
+                    trailing: Icon(
+                      option == _sort
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_unchecked,
+                      color: primaryGreen,
+                      size: 20,
+                    ),
+                    onTap: () {
+                      setState(() => _sort = option);
+                      Navigator.pop(sheetContext);
+                    },
+                  ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
   Future<void> _showFilterSheet() async {
-    final selected = await showModalBottomSheet<bool>(
+    await showModalBottomSheet<void>(
       context: context,
-      builder: (sheetContext) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (sheetContext) => DraggableScrollableSheet(
+        initialChildSize: 0.84,
+        minChildSize: 0.6,
+        maxChildSize: 0.96,
+        expand: false,
+        builder: (_, controller) => ListView(
+          controller: controller,
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
           children: [
-            const Text(
-              'Filter Wisata',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 18),
-            CheckboxListTile(
-              value: _hasFilter,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Wisata yang sedang buka'),
-              onChanged: (value) => setState(() => _hasFilter = value ?? false),
+            Center(
+              child: Container(
+                width: 98,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(sheetContext, true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryGreen,
-                  foregroundColor: Colors.white,
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Filter',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
-                child: const Text('Terapkan'),
+                TextButton(onPressed: () {}, child: const Text('Reset')),
+                IconButton(
+                  key: const Key('filter-close-button'),
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(sheetContext),
+                ),
+              ],
+            ),
+            const Text(
+              'Rentang Jarak',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _greenChip('500 M'),
+                const SizedBox(width: 6),
+                _greenChip('Terdekat'),
+                const SizedBox(width: 6),
+                _greenChip('Terjauh'),
+              ],
+            ),
+            Slider(value: 0.08, onChanged: (_) {}, activeColor: primaryGreen),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Terdekat', style: TextStyle(fontSize: 7)),
+                Text('Terjauh', style: TextStyle(fontSize: 7)),
+              ],
+            ),
+            const Divider(height: 34),
+            const Text(
+              'Rentang Harga',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            const Row(
+              children: [
+                Expanded(
+                  child: _PriceCard(label: 'Minimal', value: 'Rp 100.000,00'),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _PriceCard(
+                    label: 'Maksimal',
+                    value: 'Rp 99.999.999,00',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 16,
+              runSpacing: 12,
+              children: [
+                _priceChip('< Rp 50.000,00'),
+                _priceChip('< Rp 100.000,00'),
+                _priceChip('< Rp 300.000,00'),
+                _priceChip('Gratis'),
+              ],
+            ),
+            const Divider(height: 34),
+            const Text(
+              'Lokasi Populer',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            for (final place in [
+              'Blok M',
+              'Gelora Bung Karno',
+              'Senayan',
+              'Citra Delapan',
+            ])
+              ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text(place, style: const TextStyle(fontSize: 12)),
+                trailing: const Icon(
+                  Icons.radio_button_unchecked,
+                  color: primaryGreen,
+                  size: 18,
+                ),
               ),
+            const SizedBox(height: 12),
+            const Text('Zona', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _zoneCard(Icons.home_work_outlined, 'Dalam Ruangan'),
+                const SizedBox(width: 12),
+                _zoneCard(Icons.sports_soccer, 'Luar Ruangan'),
+              ],
             ),
           ],
         ),
       ),
     );
-    if (selected == true && mounted) setState(() {});
   }
 
-  Future<void> _showSortSheet() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (sheetContext) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Urutkan Berdasarkan',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  Widget _greenChip(String text) {
+    return Container(
+      width: 78,
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: primaryGreen,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.white, fontSize: 10),
+      ),
+    );
+  }
+
+  Widget _priceChip(String text) {
+    return Container(
+      width: 173,
+      padding: const EdgeInsets.symmetric(vertical: 7),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _zoneCard(IconData icon, String text) {
+    return Container(
+      width: 62,
+      height: 62,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black26),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 18),
+          const SizedBox(height: 4),
+          Text(text, style: const TextStyle(fontSize: 7)),
+        ],
+      ),
+    );
+  }
+}
+
+class _PriceCard extends StatelessWidget {
+  const _PriceCard({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
+      decoration: BoxDecoration(
+        color: _CategoryScreenState.primaryGreen,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.white, fontSize: 8)),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 12),
-            for (final option in [
-              'Rekomendasi',
-              'Rating Tertinggi',
-              'Harga Terendah',
-            ])
-              ListTile(
-                title: Text(option),
-                leading: Icon(
-                  option == _sort
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_unchecked,
-                  color: primaryGreen,
-                ),
-                onTap: () {
-                  setState(() => _sort = option);
-                  Navigator.pop(sheetContext);
-                },
-              ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

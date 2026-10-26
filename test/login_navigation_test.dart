@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ecowalk_application/screens/auth/login_screen.dart';
-import 'package:ecowalk_application/screens/home/home_screen.dart';
+import 'package:ecowalk_application/screens/main_navigation_screen.dart';
 
 void main() {
-  testWidgets('login dengan admin/admin123 navigasi ke HomeScreen', (
+  testWidgets('login dengan admin/admin123 navigasi ke MainNavigationScreen', (
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
@@ -16,6 +16,6 @@ void main() {
     await tester.tap(find.widgetWithText(ElevatedButton, 'MASUK'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(MainNavigationScreen), findsOneWidget);
   });
 }

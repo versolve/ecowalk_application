@@ -4,7 +4,7 @@ import 'register_screen.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../home/home_screen.dart';
+import '../main_navigation_screen.dart';
 import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
+                          builder: (context) => const MainNavigationScreen(),
                         ),
                       );
                     } else {
