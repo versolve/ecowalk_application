@@ -15,6 +15,10 @@ void main() {
     expect(find.text('Klapanunggal, Bogor'), findsOneWidget);
     expect(find.text('30°C'), findsOneWidget);
     expect(find.text('Cerah Berawan'), findsOneWidget);
+    expect(
+      find.byKey(const Key('home-weather-smart-city-icon')),
+      findsOneWidget,
+    );
     expect(find.text('Rekomendasi'), findsOneWidget);
     expect(find.text('BERANDA'), findsOneWidget);
 
@@ -28,16 +32,12 @@ void main() {
     expect(find.text('Kuliner'), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('Banyak pilihan tempat wisata bikin bingung?'),
+      find.byKey(const Key('compare-banner-image')),
       400,
       scrollable: find.byType(Scrollable).first,
     );
     expect(find.text('Pilihan Teratas'), findsOneWidget);
-    expect(
-      find.text('Banyak pilihan tempat wisata bikin bingung?'),
-      findsOneWidget,
-    );
-    expect(find.text('Bandingkan Sekarang'), findsOneWidget);
+    expect(find.byKey(const Key('compare-banner-image')), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.text('Terakhir Dilihat'),
@@ -59,6 +59,12 @@ void main() {
     expect(assetNames, contains('lib/assets/images/dufan.jpg'));
     expect(assetNames, contains('lib/assets/images/tmii.jpg'));
     expect(assetNames, contains('lib/assets/images/taman_safari.jpg'));
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('compare-banner-image')),
+      400,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.byKey(const Key('compare-banner-image')), findsOneWidget);
   });
 
   testWidgets('HomeScreen membuka ProfileScreen dari tab akun', (tester) async {

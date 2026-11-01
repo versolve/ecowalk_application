@@ -63,7 +63,7 @@ flutter:
   assets:
     - lib/assets/icons/
     - lib/assets/images/
-    - lib/assets/images/
+    - lib/assets/icons/Cuaca Smart City Icon-02.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'home/home_screen.dart';
+import 'home/recommendation_screen.dart';
 import 'profile/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         index: _selectedIndex,
         children: const [
           HomeScreen(showBottomNavigation: false),
-          _PlaceholderScreen(title: 'Rekomendasi'),
+          RecommendationScreen(showBottomNavigation: false),
           _PlaceholderScreen(title: 'Favorit'),
           ProfileScreen(showBottomNavigation: false),
         ],

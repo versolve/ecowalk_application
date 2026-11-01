@@ -197,24 +197,12 @@ class _WeatherIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned(
-          top: 4,
-          right: 20,
-          child: Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFDD00),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ),
-        const Icon(Icons.cloud, color: Color(0xFFB9DDF4), size: 98),
-        const Icon(Icons.cloud_outlined, color: Color(0xFF087DB5), size: 98),
-      ],
+    return Image.asset(
+      'lib/assets/icons/Cuaca Smart City Icon-02.png',
+      key: const Key('weather-smart-city-icon'),
+      width: double.infinity,
+      height: 104,
+      fit: BoxFit.contain,
     );
   }
 }

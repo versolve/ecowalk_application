@@ -495,48 +495,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCompareBanner() {
-    return Container(
-      height: 103,
-      padding: const EdgeInsets.fromLTRB(13, 16, 90, 10),
-      decoration: BoxDecoration(
-        color: lightGreen,
-        borderRadius: BorderRadius.circular(9),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Banyak pilihan tempat wisata bikin bingung?',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 3),
-          const Text(
-            'Bandingkan sekarang dan temukan yang terbaik!',
-            style: TextStyle(color: Colors.white70, fontSize: 8),
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Text(
-              'Bandingkan Sekarang',
-              style: TextStyle(
-                color: primaryGreen,
-                fontSize: 8,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(9),
+      child: Image.asset(
+        'lib/assets/images/banner_Yuk bandingkan pilihan Destinasi wisatamu.png',
+        key: const Key('compare-banner-image'),
+        width: double.infinity,
+        height: 103,
+        fit: BoxFit.cover,
       ),
     );
   }
@@ -655,41 +621,12 @@ class _WeatherIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Image.asset(
+      'lib/assets/icons/Cuaca Smart City Icon-02.png',
+      key: const Key('home-weather-smart-city-icon'),
+      width: double.infinity,
       height: 120,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            top: 3,
-            right: 26,
-            child: Container(
-              width: 62,
-              height: 62,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFDD00),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          const Positioned(
-            bottom: 5,
-            left: 0,
-            right: 0,
-            child: Icon(Icons.cloud, color: Color(0xFFB9DDF4), size: 102),
-          ),
-          const Positioned(
-            bottom: 4,
-            left: 8,
-            right: 8,
-            child: Icon(
-              Icons.cloud_outlined,
-              color: Color(0xFF087DB5),
-              size: 102,
-            ),
-          ),
-        ],
-      ),
+      fit: BoxFit.contain,
     );
   }
 }

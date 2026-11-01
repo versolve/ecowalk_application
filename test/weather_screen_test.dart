@@ -18,6 +18,7 @@ void main() {
     expect(find.text('Kualitas Udara'), findsOneWidget);
     expect(find.text('39.1'), findsOneWidget);
     expect(find.text('Hari ini'), findsWidgets);
+    expect(find.byKey(const Key('weather-smart-city-icon')), findsOneWidget);
 
     final cards = find.byKey(const Key('weather-metric-card'));
     expect(cards, findsNWidgets(2));
