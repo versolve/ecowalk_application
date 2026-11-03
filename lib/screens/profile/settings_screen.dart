@@ -122,7 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const SizedBox(width: 6),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => Navigator.pop(context),
                       child: const Icon(
                         Icons.close,
                         color: Color(0xFF4B5563),

@@ -11,6 +11,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
   static const primaryGreen = Color(0xFF176B5B);
   final _reviewController = TextEditingController();
   int _rating = 0;
+  bool _hideName = false;
 
   @override
   void dispose() {
@@ -126,7 +127,10 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
             const SizedBox(height: 22),
             Row(
               children: [
-                Checkbox(value: false, onChanged: (_) {}),
+                Checkbox(
+                  value: _hideName,
+                  onChanged: (value) => setState(() => _hideName = value ?? false),
+                ),
                 const Text(
                   'Sembunyikan Nama Pengguna',
                   style: TextStyle(fontSize: 11),

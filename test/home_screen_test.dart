@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ecowalk_application/screens/home/category_screen.dart';
 import 'package:ecowalk_application/screens/home/home_screen.dart';
+import 'package:ecowalk_application/screens/home/recently_viewed_screen.dart';
 import 'package:ecowalk_application/screens/profile/profile_screen.dart';
 
 void main() {
@@ -74,5 +76,54 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ProfileScreen), findsOneWidget);
+  });
+
+  testWidgets('chip kategori Home memfilter list destinasi', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+
+    await tester.scrollUntilVisible(
+      find.text('Alam'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+
+    // Filter "Alam" langsung di halaman Home (tanpa pindah halaman)
+    await tester.tap(find.text('Alam'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(CategoryScreen), findsNothing);
+    expect(find.text('Taman Safari Indonesia'), findsWidgets);
+    expect(find.text('Dunia Fantasi (DUFAN)'), findsNothing);
+    expect(find.text('Taman Mini Indonesia Indah (TMII)'), findsNothing);
+  });
+
+  testWidgets('tombol Jelajahi membuka CategoryScreen', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+
+    await tester.scrollUntilVisible(
+      find.text('Jelajahi'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+
+    await tester.tap(find.text('Jelajahi'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CategoryScreen), findsOneWidget);
+  });
+
+  testWidgets('tombol Kunjungi Lagi membuka riwayat destinasi', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+
+    await tester.scrollUntilVisible(
+      find.text('Kunjungi Lagi'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Kunjungi Lagi').last);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(RecentlyViewedScreen), findsOneWidget);
   });
 }

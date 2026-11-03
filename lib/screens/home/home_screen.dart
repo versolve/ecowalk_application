@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../models/user_profile_state.dart';
 import '../profile/profile_screen.dart';
 import 'category_screen.dart';
 import 'detail_wisata_screen.dart';
@@ -22,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const darkGreen = Color(0xFF0D5D4F);
   static const lightGreen = Color(0xFF4F8F83);
   int _selectedNav = 0;
+  String _activeCategory = 'Semua';
 
   static const categories = [
     'Semua',
@@ -41,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       imagePath: 'lib/assets/images/dufan.jpg',
       color: Color(0xFFB85F36),
       icon: Icons.attractions,
+      category: 'Seni',
     ),
     _Destination(
       name: 'Taman Mini Indonesia Indah (TMII)',
@@ -50,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       imagePath: 'lib/assets/images/tmii.jpg',
       color: Color(0xFF5B83B7),
       icon: Icons.account_balance,
+      category: 'Sejarah',
     ),
     _Destination(
       name: 'Taman Safari Indonesia',
@@ -59,8 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
       imagePath: 'lib/assets/images/taman_safari.jpg',
       color: Color(0xFF67935D),
       icon: Icons.forest,
+      category: 'Alam',
     ),
   ];
+
+  List<_Destination> get _visibleDestinations => _activeCategory == 'Semua'
+      ? destinations
+      : destinations
+            .where((destination) => destination.category == _activeCategory)
+            .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +105,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildSectionTitle(
                           'Pilihan Teratas',
                           trailing: 'Jelajahi',
+                          onTrailingTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CategoryScreen(
+                                  initialCategory: _activeCategory,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 12),
                         _buildLandscapeList(),
@@ -101,6 +124,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildSectionTitle(
                           'Kunjungi Lagi',
                           trailing: 'Selengkapnya',
+                          onTitleTap: _openRecentlyViewed,
+                          onTrailingTap: _openRecentlyViewed,
                         ),
                         const SizedBox(height: 12),
                         _buildLandscapeList(),
@@ -165,10 +190,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const Spacer(),
-        const CircleAvatar(
-          radius: 18,
-          backgroundColor: Color(0xFFE1E8E6),
-          child: Icon(Icons.person, color: primaryGreen, size: 23),
+        ValueListenableBuilder<File?>(
+          valueListenable: UserProfileState.imageNotifier,
+          builder: (context, image, _) => CircleAvatar(
+            radius: 18,
+            backgroundColor: const Color(0xFFE1E8E6),
+            foregroundImage: image == null ? null : FileImage(image),
+            child: const Icon(Icons.person, color: primaryGreen, size: 23),
+          ),
         ),
         const SizedBox(width: 10),
         GestureDetector(
@@ -266,17 +295,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openRecentlyViewed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const RecentlyViewedScreen()),
+    );
+  }
+
   Widget _buildSectionTitle(
     String title, {
     String? trailing,
     VoidCallback? onTrailingTap,
+    VoidCallback? onTitleTap,
     Key? trailingKey,
   }) {
     return Row(
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        GestureDetector(
+          onTap: onTitleTap,
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
         ),
         if (trailing != null) ...[
           const Spacer(),
@@ -302,9 +342,10 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 218,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: destinations.length,
+        itemCount: _visibleDestinations.length,
         separatorBuilder: (_, index) => const SizedBox(width: 18),
-        itemBuilder: (_, index) => _buildDestinationCard(destinations[index]),
+        itemBuilder: (_, index) =>
+            _buildDestinationCard(_visibleDestinations[index]),
       ),
     );
   }
@@ -446,17 +487,9 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: categories.length,
         separatorBuilder: (_, index) => const SizedBox(width: 20),
         itemBuilder: (_, index) {
-          final selected = index == 0;
+          final selected = categories[index] == _activeCategory;
           return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      CategoryScreen(initialCategory: categories[index]),
-                ),
-              );
-            },
+            onTap: () => setState(() => _activeCategory = categories[index]),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: selected ? 11 : 0),
               alignment: Alignment.center,
@@ -484,11 +517,11 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 105,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: destinations.length,
+        itemCount: _visibleDestinations.length,
         separatorBuilder: (_, index) => const SizedBox(width: 16),
         itemBuilder: (_, index) => SizedBox(
           width: 145,
-          child: _buildDestinationCard(destinations[index]),
+          child: _buildDestinationCard(_visibleDestinations[index]),
         ),
       ),
     );
@@ -658,6 +691,7 @@ class _Destination {
   final String imagePath;
   final Color color;
   final IconData icon;
+  final String category;
 
   const _Destination({
     required this.name,
@@ -667,5 +701,6 @@ class _Destination {
     required this.imagePath,
     required this.color,
     required this.icon,
+    this.category = 'Semua',
   });
 }

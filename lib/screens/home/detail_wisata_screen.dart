@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'add_review_screen.dart';
 import 'review_list_screen.dart';
@@ -221,31 +223,7 @@ class _DetailWisataScreenState extends State<DetailWisataScreen> {
                     style: TextStyle(fontSize: 11, color: Colors.black54),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    height: 140,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE2EFEA),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.black12),
-                    ),
-                    child: const Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.map_outlined, color: primaryGreen),
-                          SizedBox(width: 8),
-                          Text(
-                            'Peta Lokasi Wisata',
-                            style: TextStyle(
-                              color: primaryGreen,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  const _WisataLocationMap(height: 140),
                 ],
               ),
             ),
@@ -296,6 +274,73 @@ class _DetailWisataScreenState extends State<DetailWisataScreen> {
             style: TextStyle(fontSize: 11, color: Colors.black87),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _WisataLocationMap extends StatelessWidget {
+  const _WisataLocationMap({required this.height});
+
+  final double height;
+  static const _point = LatLng(-6.1253, 106.8335);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: SizedBox(
+        height: height,
+        width: double.infinity,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            FlutterMap(
+              options: const MapOptions(
+                initialCenter: _point,
+                initialZoom: 14.0,
+                interactionOptions: InteractionOptions(
+                  flags: InteractiveFlag.none,
+                ),
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.ecowalk_application',
+                  maxZoom: 16,
+                ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: _point,
+                      width: 32,
+                      height: 32,
+                      child: const Icon(
+                        Icons.location_on,
+                        color: Color(0xFF176B5B),
+                        size: 32,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Positioned(
+              right: 6,
+              bottom: 6,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.8)),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  child: Text(
+                    '© OpenStreetMap contributors',
+                    style: TextStyle(fontSize: 8, color: Colors.black87),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

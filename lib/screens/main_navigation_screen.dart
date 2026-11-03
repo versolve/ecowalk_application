@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'home/favorite_screen.dart';
 import 'home/home_screen.dart';
 import 'home/recommendation_screen.dart';
 import 'profile/profile_screen.dart';
@@ -24,7 +25,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         children: const [
           HomeScreen(showBottomNavigation: false),
           RecommendationScreen(showBottomNavigation: false),
-          _PlaceholderScreen(title: 'Favorit'),
+          FavoriteScreen(showBottomNavigation: false),
           ProfileScreen(showBottomNavigation: false),
         ],
       ),
@@ -123,20 +124,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ),
         const SizedBox(height: 3),
       ],
-    );
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text('$title belum tersedia.')),
     );
   }
 }

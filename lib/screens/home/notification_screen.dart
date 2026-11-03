@@ -29,7 +29,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
               onTap: () => setState(() => _allRead = true),
               child: Row(
                 children: [
-                  Checkbox(value: _allRead, onChanged: (_) {}),
+                  Checkbox(
+                    value: _allRead,
+                    onChanged: (value) => setState(() => _allRead = value ?? false),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

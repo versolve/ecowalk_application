@@ -35,17 +35,17 @@ void main() {
     },
   );
 
-  testWidgets('HomeScreen membuka CategoryScreen saat chip kategori ditekan', (
+  testWidgets('HomeScreen membuka CategoryScreen saat tombol Jelajahi ditekan', (
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
 
     await tester.scrollUntilVisible(
-      find.text('Kuliner'),
+      find.text('Jelajahi'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(find.text('Kuliner'));
+    await tester.tap(find.text('Jelajahi'));
     await tester.pumpAndSettle();
 
     expect(find.byType(CategoryScreen), findsOneWidget);

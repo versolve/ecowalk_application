@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../widgets/custom_clipper.dart';
+import 'reset_password_screen.dart';
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({
@@ -29,7 +30,17 @@ class _VerificationScreenState extends State<VerificationScreen> {
     _isUsingEmail = widget.isUsingEmail;
   }
 
-  Widget _buildOtpBox(BuildContext context) {
+  final _otpControllers = List.generate(4, (_) => TextEditingController());
+
+  @override
+  void dispose() {
+    for (final controller in _otpControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  Widget _buildOtpBox(BuildContext context, int index) {
     return Container(
       width: 65,
       height: 65,
@@ -47,6 +58,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
           counterText: "",
           border: InputBorder.none,
         ),
+        controller: _otpControllers[index],
         onChanged: (value) {
           if (value.length == 1) FocusScope.of(context).nextFocus();
         },
@@ -165,7 +177,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(
                       4,
-                      (index) => _buildOtpBox(context),
+                      (index) => _buildOtpBox(context, index),
                     ),
                   ),
 
@@ -197,7 +209,23 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        final code = _otpControllers.map((item) => item.text).join();
+                        if (code.length != 4) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Masukkan kode verifikasi lengkap.'),
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ResetPasswordScreen(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryGreen,
                         shape: RoundedRectangleBorder(
@@ -220,7 +248,13 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   // Tombol Kirim Ulang
                   Center(
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Kode verifikasi telah dikirim ulang.'),
+                          ),
+                        );
+                      },
                       child: const Text(
                         'Kirim Ulang Kode',
                         style: TextStyle(

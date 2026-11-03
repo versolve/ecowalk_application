@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../models/user_profile_state.dart';
 import 'profile_widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -151,11 +152,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               height: 48,
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Profil berhasil diperbarui.'),
-                    ),
-                  );
+                  final name = _nameController.text.trim();
+                  UserProfileState.update(name: name, image: _profileImage);
+                  Navigator.pop<Map<String, Object?>>(context, {
+                    'name': name,
+                    'image': _profileImage,
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryGreen,

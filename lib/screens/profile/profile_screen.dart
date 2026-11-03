@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../auth/login_screen.dart';
+import '../../models/user_profile_state.dart';
+import '../home/favorite_screen.dart';
 import '../home/home_screen.dart';
+import '../home/recommendation_screen.dart';
 import 'edit_profile_screen.dart';
 import 'settings_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -9,12 +14,17 @@ import 'about_us_screen.dart';
 import 'terms_of_service_screen.dart';
 import 'profile_widgets.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.showBottomNavigation = true});
 
-  static const primaryGreen = Color(0xFF176B5B);
-
   final bool showBottomNavigation;
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  static const primaryGreen = Color(0xFF176B5B);
 
   void _showLogoutDialog(BuildContext context) {
     showDialog<void>(
@@ -98,17 +108,29 @@ class ProfileScreen extends StatelessWidget {
                 height: 160,
                 color: primaryGreen,
               ),
-              const Positioned(bottom: -50, child: ProfileAvatar(radius: 50)),
+              Positioned(
+                bottom: -50,
+                child: ValueListenableBuilder<File?>(
+                  valueListenable: UserProfileState.imageNotifier,
+                  builder: (_, image, _) => ProfileAvatar(
+                    radius: 50,
+                    imageFile: image,
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 58),
-          const Text(
-            'KAYI NYAP NYAP',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-              color: Colors.black87,
-              letterSpacing: 0.5,
+          ValueListenableBuilder<String>(
+            valueListenable: UserProfileState.nameNotifier,
+            builder: (_, name, _) => Text(
+              name,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: Colors.black87,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -143,13 +165,12 @@ class ProfileScreen extends StatelessWidget {
                     );
                   },
                 ),
-                _buildMenuItem(context, Icons.edit_outlined, 'Edit Profil', () {
-                  Navigator.push(
+                _buildMenuItem(context, Icons.edit_outlined, 'Edit Profil', () async {
+                  await Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const EditProfileScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const EditProfileScreen()),
                   );
+                  setState(() {});
                 }),
                 _buildMenuItem(
                   context,
@@ -195,7 +216,7 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: showBottomNavigation
+      bottomNavigationBar: widget.showBottomNavigation
           ? _buildCustomBottomNavBar(context)
           : null,
     );
@@ -253,6 +274,7 @@ class ProfileScreen extends StatelessWidget {
                 child: SizedBox(
                   height: 56,
                   child: IconButton(
+                    key: const Key('profile-nav-beranda'),
                     icon: const Icon(
                       Icons.home_outlined,
                       color: Colors.white,
@@ -271,12 +293,22 @@ class ProfileScreen extends StatelessWidget {
                 child: SizedBox(
                   height: 56,
                   child: IconButton(
+                    key: const Key('profile-nav-rekomendasi'),
                     icon: const Icon(
                       Icons.shield_outlined,
                       color: Colors.white,
                       size: 26,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RecommendationScreen(
+                            showBottomNavigation: false,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -284,12 +316,22 @@ class ProfileScreen extends StatelessWidget {
                 child: SizedBox(
                   height: 56,
                   child: IconButton(
+                    key: const Key('profile-nav-favorit'),
                     icon: const Icon(
                       Icons.chat_bubble_outline,
                       color: Colors.white,
                       size: 26,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const FavoriteScreen(
+                            showBottomNavigation: false,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),

@@ -23,6 +23,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
   ];
   late String _category;
   String _sort = 'Direkomendasikan';
+  String _distance = '500 M';
+
+  void _resetFilters() {
+    setState(() {
+      _distance = '500 M';
+      _sort = 'Direkomendasikan';
+    });
+  }
 
   final _destinations = const [
     _CategoryDestination(
@@ -384,7 +392,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                TextButton(onPressed: () {}, child: const Text('Reset')),
+                TextButton(
+                  key: const Key('filter-reset-button'),
+                  onPressed: () {
+                    _resetFilters();
+                    setState(() {});
+                  },
+                  child: const Text('Reset'),
+                ),
                 IconButton(
                   key: const Key('filter-close-button'),
                   icon: const Icon(Icons.close),
@@ -399,11 +414,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
             const SizedBox(height: 10),
             Row(
               children: [
-                _greenChip('500 M'),
+                _greenChip('500 M', selected: _distance == '500 M'),
                 const SizedBox(width: 6),
-                _greenChip('Terdekat'),
+                _greenChip('Terdekat', selected: _distance == 'Terdekat'),
                 const SizedBox(width: 6),
-                _greenChip('Terjauh'),
+                _greenChip('Terjauh', selected: _distance == 'Terjauh'),
               ],
             ),
             Slider(value: 0.08, onChanged: (_) {}, activeColor: primaryGreen),
@@ -483,18 +498,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  Widget _greenChip(String text) {
-    return Container(
-      width: 78,
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: primaryGreen,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.white, fontSize: 10),
+  Widget _greenChip(String text, {bool selected = true}) {
+    return GestureDetector(
+      onTap: () => setState(() => _distance = text),
+      child: Container(
+        width: 78,
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? primaryGreen : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: selected ? Colors.white : Colors.black87,
+            fontSize: 10,
+          ),
+        ),
       ),
     );
   }

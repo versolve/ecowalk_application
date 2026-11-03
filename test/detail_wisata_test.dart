@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ecowalk_application/screens/home/home_screen.dart';
 import 'package:ecowalk_application/screens/home/detail_wisata_screen.dart';
@@ -24,6 +25,7 @@ void main() {
     expect(find.text('Nilai & Ulasan'), findsOneWidget);
     expect(find.text('Lihat Peta'), findsOneWidget);
     expect(find.text('Rp. 190.000 - Rp. 400.000'), findsOneWidget);
+    expect(find.byType(FlutterMap), findsOneWidget);
   });
 
   testWidgets('HomeScreen membuka detail saat card destinasi ditekan', (

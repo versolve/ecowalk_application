@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../widgets/custom_clipper.dart';
+import 'login_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -13,6 +14,15 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool _isObscure1 = true;
   bool _isObscure2 = true;
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
   static const Color primaryGreen = Color(0xFF1B5E4B);
   static const Color headerBgColor = Color(0xFFE8F1EF);
 
@@ -98,6 +108,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   const SizedBox(height: 32),
 
                   TextField(
+                    controller: _newPasswordController,
                     obscureText: _isObscure1,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(
@@ -126,6 +137,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   const SizedBox(height: 24),
 
                   TextField(
+                    controller: _confirmPasswordController,
                     obscureText: _isObscure2,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(
@@ -157,7 +169,31 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        final password = _newPasswordController.text;
+                        final confirmation = _confirmPasswordController.text;
+                        if (password.length < 8) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Kata sandi minimal 8 karakter.'),
+                            ),
+                          );
+                          return;
+                        }
+                        if (password != confirmation) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Konfirmasi kata sandi tidak sama.'),
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          (route) => false,
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryGreen,
                         shape: RoundedRectangleBorder(

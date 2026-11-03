@@ -34,6 +34,22 @@ void main() {
     expect(find.byType(HomeScreen), findsOneWidget);
   });
 
+  testWidgets('nama profil berubah setelah disimpan dari Edit Profil', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
+
+    await tester.tap(find.text('Edit Profil'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'FERDI BARU');
+    await tester.tap(find.text('SIMPAN'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ProfileScreen), findsOneWidget);
+    expect(find.text('FERDI BARU'), findsOneWidget);
+    expect(find.text('KAYI NYAP NYAP'), findsNothing);
+  });
+
   testWidgets('Keluar membuka dialog konfirmasi dan Batal menutupnya', (
     tester,
   ) async {
