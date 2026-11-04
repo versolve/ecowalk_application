@@ -81,81 +81,99 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        _buildHeader(),
-                        const SizedBox(height: 20),
-                        _buildWeatherCard(),
-                        const SizedBox(height: 20),
-                        _buildSectionTitle('Rekomendasi'),
-                        const SizedBox(height: 10),
-                        _buildRecommendationList(),
-                        const SizedBox(height: 26),
-                        _buildSectionTitle('Kategori'),
-                        const SizedBox(height: 10),
-                        _buildCategories(),
-                        const SizedBox(height: 18),
-                        _buildSectionTitle(
-                          'Pilihan Teratas',
-                          trailing: 'Jelajahi',
-                          onTrailingTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => CategoryScreen(
-                                  initialCategory: _activeCategory,
-                                ),
-                              ),
-                            );
-                          },
+            Column(
+              children: [
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate([
+                            _buildHeader(),
+                            const SizedBox(height: 20),
+                            _buildWeatherCard(),
+                            const SizedBox(height: 20),
+                            _buildSectionTitle('Rekomendasi'),
+                            const SizedBox(height: 10),
+                            _buildRecommendationList(),
+                            const SizedBox(height: 26),
+                            _buildSectionTitle('Kategori'),
+                            const SizedBox(height: 10),
+                            _buildCategories(),
+                            const SizedBox(height: 18),
+                            _buildSectionTitle(
+                              'Pilihan Teratas',
+                              trailing: 'Jelajahi',
+                              onTrailingTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CategoryScreen(
+                                      initialCategory: _activeCategory,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            _buildLandscapeList(),
+                            const SizedBox(height: 28),
+                            _buildCompareBanner(),
+                            const SizedBox(height: 28),
+                            _buildSectionTitle(
+                              'Kunjungi Lagi',
+                              trailing: 'Selengkapnya',
+                              onTitleTap: _openRecentlyViewed,
+                              onTrailingTap: _openRecentlyViewed,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildLandscapeList(),
+                            const SizedBox(height: 28),
+                            _buildSectionTitle(
+                              'Terakhir Dilihat',
+                              trailing: 'Selengkapnya',
+                              trailingKey: const Key('recently-viewed-more'),
+                              onTrailingTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const RecentlyViewedScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              height: 196,
+                              child: _buildDestinationCard(destinations.first),
+                            ),
+                            const SizedBox(height: 96),
+                          ]),
                         ),
-                        const SizedBox(height: 12),
-                        _buildLandscapeList(),
-                        const SizedBox(height: 28),
-                        _buildCompareBanner(),
-                        const SizedBox(height: 28),
-                        _buildSectionTitle(
-                          'Kunjungi Lagi',
-                          trailing: 'Selengkapnya',
-                          onTitleTap: _openRecentlyViewed,
-                          onTrailingTap: _openRecentlyViewed,
-                        ),
-                        const SizedBox(height: 12),
-                        _buildLandscapeList(),
-                        const SizedBox(height: 28),
-                        _buildSectionTitle(
-                          'Terakhir Dilihat',
-                          trailing: 'Selengkapnya',
-                          trailingKey: const Key('recently-viewed-more'),
-                          onTrailingTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const RecentlyViewedScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          height: 196,
-                          child: _buildDestinationCard(destinations.first),
-                        ),
-                        const SizedBox(height: 96),
-                      ]),
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+                if (widget.showBottomNavigation) _buildBottomNavigationBar(),
+              ],
+            ),
+            Positioned(
+              right: 16,
+              bottom: widget.showBottomNavigation ? 76 : 8,
+              child: GestureDetector(
+                key: const Key('ai-floating-button'),
+                behavior: HitTestBehavior.opaque,
+                onTap: () {},
+                child: Image.asset(
+                  'lib/assets/icons/robot.png',
+                  width: 64,
+                  height: 64,
+                ),
               ),
             ),
-            if (widget.showBottomNavigation) _buildBottomNavigationBar(),
           ],
         ),
       ),

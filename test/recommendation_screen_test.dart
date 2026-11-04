@@ -5,7 +5,9 @@ import 'package:ecowalk_application/screens/home/recommendation_screen.dart';
 import 'package:ecowalk_application/screens/main_navigation_screen.dart';
 
 void main() {
-  testWidgets('RecommendationScreen menampilkan pencarian rute', (tester) async {
+  testWidgets('RecommendationScreen menampilkan pencarian rute', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: RecommendationScreen()));
 
     expect(find.text('MAU KEMANA HARI INI?'), findsOneWidget);
@@ -13,6 +15,24 @@ void main() {
     expect(find.text('Masukan Lokasi Tujuan'), findsOneWidget);
     expect(find.text('Cari Rute'), findsOneWidget);
     expect(find.text('Rekomendasi Tujuan'), findsOneWidget);
+  });
+
+  testWidgets('lokasi asal dan tujuan menerima input teks', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: RecommendationScreen()));
+
+    await tester.tap(find.byKey(const Key('origin-location-input')));
+    await tester.enterText(
+      find.byKey(const Key('origin-location-input')),
+      'Stasiun Bogor',
+    );
+    await tester.tap(find.byKey(const Key('destination-location-input')));
+    await tester.enterText(
+      find.byKey(const Key('destination-location-input')),
+      'Monas',
+    );
+
+    expect(find.text('Stasiun Bogor'), findsOneWidget);
+    expect(find.text('Monas'), findsOneWidget);
   });
 
   testWidgets('Cari Rute membuka perbandingan transportasi', (tester) async {
@@ -29,18 +49,70 @@ void main() {
     expect(find.text('Transportasi Umum'), findsOneWidget);
   });
 
-  testWidgets('Menu rekomendasi pada navigasi utama membuka halaman rekomendasi', (
+  testWidgets('map rute lebih kotak dan mode perjalanan bisa dipilih', (
     tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: MainNavigationScreen()));
-
-    await tester.tap(find.byKey(const Key('bottom-nav-rekomendasi')));
+    await tester.pumpWidget(const MaterialApp(home: RecommendationScreen()));
+    await tester.tap(find.text('Cari Rute'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(RecommendationScreen), findsOneWidget);
-    expect(find.text('BERANDA'), findsNothing);
-    expect(find.text('REKOMENDASI'), findsOneWidget);
+    final mapSize = tester.getSize(find.byType(FlutterMap));
+    expect(mapSize.height, 220);
+
+    final carMode = find.byKey(const Key('route-mode-car'));
+    final carContainer = find.descendant(
+      of: carMode,
+      matching: find.byType(Container),
+    );
+    expect(
+      (tester.widget<Container>(carContainer).decoration as BoxDecoration)
+          .color,
+      isNot(const Color(0xFFF1F5F4)),
+    );
+
+    await tester.tap(carMode);
+    await tester.pump();
+
+    expect(
+      (tester.widget<Container>(carContainer).decoration as BoxDecoration)
+          .color,
+      const Color(0xFFF1F5F4),
+    );
   });
+
+  testWidgets(
+    'perbandingan rute memberi jarak header dan tips selebar konten',
+    (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: RecommendationScreen()));
+      await tester.tap(find.text('Cari Rute'));
+      await tester.pumpAndSettle();
+
+      final appBarBottom = tester.getBottomLeft(find.byType(AppBar)).dy;
+      final bannerTop = tester
+          .getTopLeft(find.byKey(const Key('route-destination-banner')))
+          .dy;
+      expect(bannerTop - appBarBottom, greaterThanOrEqualTo(24));
+
+      final tipsWidth = tester
+          .getSize(find.byKey(const Key('route-tips-banner')))
+          .width;
+      expect(tipsWidth, tester.getSize(find.byType(Scaffold)).width - 32);
+    },
+  );
+
+  testWidgets(
+    'Menu rekomendasi pada navigasi utama membuka halaman rekomendasi',
+    (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: MainNavigationScreen()));
+
+      await tester.tap(find.byKey(const Key('bottom-nav-rekomendasi')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(RecommendationScreen), findsOneWidget);
+      expect(find.text('BERANDA'), findsNothing);
+      expect(find.text('REKOMENDASI'), findsOneWidget);
+    },
+  );
 
   testWidgets('Transportasi umum membuka detail dan jadwal keberangkatan', (
     tester,
@@ -90,43 +162,54 @@ void main() {
     expect(find.text('Terlambat 11 mnt'), findsOneWidget);
   });
 
-  testWidgets('detail MRT, LRT, KRL, dan Mikrotrans membuka banner gambar masing-masing', (
-    tester,
-  ) async {
-    final modes = [
-      ('MRT Jakarta', 'lib/assets/images/mrt.png', 'MRT Jakarta'),
-      ('LRT Jabodetabek', 'lib/assets/images/lrt.png', 'LRT Jakarta'),
-      ('KRL Commuter Line', 'lib/assets/images/krl.png', 'KRL (Commuter Line)'),
-      ('Mikrotrans (JakLingko)', 'lib/assets/images/microtrans.png', 'Jaklingko (Microtrans)'),
-    ];
-
-    for (final mode in modes) {
-      await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(const MaterialApp(home: RecommendationScreen()));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Cari Rute'));
-      await tester.tap(find.text('Cari Rute'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('vehicle-public-transport')));
-      await tester.pumpAndSettle();
-
-      await tester.ensureVisible(find.text(mode.$1));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(mode.$1));
-      await tester.pumpAndSettle();
-
-      expect(find.text(mode.$3), findsAtLeastNWidgets(1));
-      final modeImages = tester.widgetList<Image>(find.byType(Image));
-      expect(
-        modeImages.any(
-          (image) =>
-              image.image is AssetImage &&
-              (image.image as AssetImage).assetName == mode.$2,
+  testWidgets(
+    'detail MRT, LRT, KRL, dan Mikrotrans membuka banner gambar masing-masing',
+    (tester) async {
+      final modes = [
+        ('MRT Jakarta', 'lib/assets/images/mrt.png', 'MRT Jakarta'),
+        ('LRT Jabodetabek', 'lib/assets/images/lrt.png', 'LRT Jakarta'),
+        (
+          'KRL Commuter Line',
+          'lib/assets/images/krl.png',
+          'KRL (Commuter Line)',
         ),
-        isTrue,
-      );
-    }
-  });
+        (
+          'Mikrotrans (JakLingko)',
+          'lib/assets/images/microtrans.png',
+          'Jaklingko (Microtrans)',
+        ),
+      ];
+
+      for (final mode in modes) {
+        await tester.pumpWidget(const SizedBox());
+        await tester.pumpWidget(
+          const MaterialApp(home: RecommendationScreen()),
+        );
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Cari Rute'));
+        await tester.tap(find.text('Cari Rute'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('vehicle-public-transport')));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text(mode.$1));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(mode.$1));
+        await tester.pumpAndSettle();
+
+        expect(find.text(mode.$3), findsAtLeastNWidgets(1));
+        final modeImages = tester.widgetList<Image>(find.byType(Image));
+        expect(
+          modeImages.any(
+            (image) =>
+                image.image is AssetImage &&
+                (image.image as AssetImage).assetName == mode.$2,
+          ),
+          isTrue,
+        );
+      }
+    },
+  );
 
   testWidgets('kardus transportasi menampilkan aset gambar yang sesuai', (
     tester,

@@ -126,4 +126,23 @@ void main() {
 
     expect(find.byType(RecentlyViewedScreen), findsOneWidget);
   });
+
+  testWidgets('tombol AI floating menampilkan icon robot di kanan bawah', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('ai-floating-button')),
+      findsOneWidget,
+    );
+    final images = tester.widgetList<Image>(find.byType(Image)).toList();
+    expect(
+      images.any((image) =>
+          image.image is AssetImage &&
+          (image.image as AssetImage).assetName == 'lib/assets/icons/robot.png'),
+      isTrue,
+    );
+  });
 }

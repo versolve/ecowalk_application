@@ -125,13 +125,17 @@ class RecommendationScreen extends StatelessWidget {
       child: Column(
         children: [
           _buildInputTile(
+            inputKey: const Key('origin-location-input'),
             icon: Icons.search,
             hint: 'Masukan Lokasi Asal',
+            textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: 10),
           _buildInputTile(
+            inputKey: const Key('destination-location-input'),
             icon: Icons.location_on_outlined,
             hint: 'Masukan Lokasi Tujuan',
+            textInputAction: TextInputAction.done,
           ),
         ],
       ),
@@ -139,8 +143,10 @@ class RecommendationScreen extends StatelessWidget {
   }
 
   Widget _buildInputTile({
+    required Key inputKey,
     required IconData icon,
     required String hint,
+    required TextInputAction textInputAction,
   }) {
     return Container(
       height: 44,
@@ -154,13 +160,11 @@ class RecommendationScreen extends StatelessWidget {
           Icon(icon, color: Colors.black54, size: 20),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              hint,
-              style: const TextStyle(
-                color: Colors.black54,
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
-              ),
+            child: TextField(
+              key: inputKey,
+              textInputAction: textInputAction,
+              decoration: InputDecoration.collapsed(hintText: hint),
+              style: const TextStyle(fontSize: 12),
             ),
           ),
         ],
@@ -328,25 +332,28 @@ class RouteRecommendationScreen extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          _buildDestinationBanner(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 32, 16, 0),
+            child: _buildDestinationBanner(),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
                 _buildBrandLogo(),
-          const SizedBox(height: 12),
-          _buildTravelModes(),
-          const SizedBox(height: 16),
-          _buildMapCard(),
-          const SizedBox(height: 20),
-          const Text(
-            'Opsi Kendaraan',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          _buildVehicleOptions(context),
-          const SizedBox(height: 16),
-          _buildTipsBanner(),
+                const SizedBox(height: 12),
+                _buildTravelModes(),
+                const SizedBox(height: 16),
+                _buildMapCard(),
+                const SizedBox(height: 20),
+                const Text(
+                  'Opsi Kendaraan',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                _buildVehicleOptions(context),
+                const SizedBox(height: 16),
+                _buildTipsBanner(),
               ],
             ),
           ),
@@ -357,6 +364,7 @@ class RouteRecommendationScreen extends StatelessWidget {
 
   Widget _buildDestinationBanner() {
     return Container(
+      key: const Key('route-destination-banner'),
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -452,47 +460,80 @@ class RouteRecommendationScreen extends StatelessWidget {
   }
 
   Widget _buildTravelModes() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildModePill(Icons.directions_walk, '13 menit', isSelected: true),
-        _buildModePill(Icons.directions_car, '5 menit'),
-        _buildModePill(Icons.two_wheeler, '4 menit'),
-        _buildModePill(Icons.directions_bus, '18 menit'),
-      ],
-    );
-  }
-
-  Widget _buildModePill(
-    IconData icon,
-    String label, {
-    bool isSelected = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFF1F5F4) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        border: isSelected
-            ? Border.all(color: Colors.black12)
-            : Border.all(color: Colors.transparent),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    var selectedMode = 0;
+    return StatefulBuilder(
+      builder: (context, setState) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, size: 16, color: Colors.black87),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+          _buildModePill(
+            key: const Key('route-mode-walk'),
+            icon: Icons.directions_walk,
+            label: '13 menit',
+            isSelected: selectedMode == 0,
+            onTap: () => setState(() => selectedMode = 0),
+          ),
+          _buildModePill(
+            key: const Key('route-mode-car'),
+            icon: Icons.directions_car,
+            label: '5 menit',
+            isSelected: selectedMode == 1,
+            onTap: () => setState(() => selectedMode = 1),
+          ),
+          _buildModePill(
+            key: const Key('route-mode-motorcycle'),
+            icon: Icons.two_wheeler,
+            label: '4 menit',
+            isSelected: selectedMode == 2,
+            onTap: () => setState(() => selectedMode = 2),
+          ),
+          _buildModePill(
+            key: const Key('route-mode-public-transport'),
+            icon: Icons.directions_bus,
+            label: '18 menit',
+            isSelected: selectedMode == 3,
+            onTap: () => setState(() => selectedMode = 3),
           ),
         ],
       ),
     );
   }
 
+  Widget _buildModePill({
+    required Key key,
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      key: key,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFF1F5F4) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: isSelected
+              ? Border.all(color: Colors.black12)
+              : Border.all(color: Colors.transparent),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: Colors.black87),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildMapCard() {
-    return const _OsmRouteMap(height: 160);
+    return const _OsmRouteMap(height: 220);
   }
 
   Widget _buildVehicleOptions(BuildContext context) {
@@ -522,15 +563,15 @@ class RouteRecommendationScreen extends StatelessWidget {
               child: _buildVehicleCard(
                 title: 'Transportasi Umum',
                 subtitle: 'Bus, KRL, MRT, LRT\nHemat, dan murah',
-              imagePath: 'lib/assets/images/transportasi-umum.jpg',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const PublicTransportDetailScreen(),
-                  ),
-                );
-              },
+                imagePath: 'lib/assets/images/transportasi-umum.jpg',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PublicTransportDetailScreen(),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -617,6 +658,8 @@ class RouteRecommendationScreen extends StatelessWidget {
 
   Widget _buildTipsBanner() {
     return Container(
+      key: const Key('route-tips-banner'),
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: primaryGreen,
@@ -889,8 +932,10 @@ class PublicTransportAccordionScreen extends StatelessWidget {
     this.title = 'TransJakarta',
     this.imageAsset = 'lib/assets/images/tj.png',
     this.cost = 'Rp 3.500 (tarif flat TransJakarta)',
-    this.estimate = '±60-75 menit (tergantung kondisi lalu lintas dan waktu tunggu)',
-    this.departure = 'Perkiraan keberangkatan dari Halte Duri Kepa: Pukul 18.00 WIB',
+    this.estimate =
+        '±60-75 menit (tergantung kondisi lalu lintas dan waktu tunggu)',
+    this.departure =
+        'Perkiraan keberangkatan dari Halte Duri Kepa: Pukul 18.00 WIB',
     this.departureSub = 'Bisa berubah tergantung kepadatan lalu lintas',
     this.stationName = 'Halte SSSSS',
     this.routes = const [
@@ -1194,11 +1239,7 @@ class PublicTransportAccordionScreen extends StatelessWidget {
         color: primaryGreen,
         borderRadius: BorderRadius.circular(10),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -1254,10 +1295,7 @@ class PublicTransportAccordionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCardItem({
-    required String title,
-    required Widget child,
-  }) {
+  Widget _buildCardItem({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 12),
@@ -1288,10 +1326,7 @@ class PublicTransportAccordionScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 6, bottom: 2),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: child,
-              ),
+              child: Align(alignment: Alignment.centerLeft, child: child),
             ),
           ],
         ),
@@ -1516,10 +1551,7 @@ class OjekOnlineDetailScreen extends StatelessWidget {
             right: 12,
             bottom: 12,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 4,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(6),
@@ -1655,9 +1687,14 @@ class _OsmRouteMap extends StatelessWidget {
               right: 6,
               bottom: 6,
               child: DecoratedBox(
-                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.8)),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
                   child: Text(
                     '© OpenStreetMap contributors',
                     style: TextStyle(fontSize: 8, color: Colors.black87),
